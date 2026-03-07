@@ -2,7 +2,7 @@ use std::{collections::BTreeMap, net::SocketAddr, sync::{Arc, RwLock}};
 
 use hyper::{body::Incoming, Method, Request, Response};
 use hyper_services::{
-    commons::HandlerResult, request_processing::get_request_body_as_string, response_building::{bad_request, full_to_boxed_body}, service::stateful_service::StatefulHandler
+    commons::HandlerResult, request_processing::get_request_body_as_string, response_building::{bad_request, bytes_to_boxed_body}, service::stateful_service::StatefulHandler
 };
 use serde::{Deserialize, Serialize};
 use serde_json::to_string;
@@ -54,7 +54,7 @@ impl  StatefulHandler for LedCommandHandler {
                     self.pixel_strip_manager.queue_command(command);
                 }
 
-                return Ok(Response::new(full_to_boxed_body("Ok")));
+                return Ok(Response::new(bytes_to_boxed_body("Ok")));
             },
             method=>{
                 eprintln!("Received unexpected method {:?}",method);

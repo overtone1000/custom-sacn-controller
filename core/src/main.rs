@@ -12,7 +12,7 @@ use std::{
     net::{IpAddr, Ipv4Addr},
 };
 
-use hyper_services::{service::stateful_service::StatefulService, spawn_server};
+use hyper_services::{service::stateful_service::StatefulService};
 
 #[tokio::main]
 async fn main() {
@@ -111,11 +111,11 @@ async fn main() {
         let handler = LedCommandHandler::new(pixel_strip_manager);
 
         println!("Starting DDP Service");
-
-        spawn_server(
+        let service = StatefulService::create(handler);
+        service.start(
             IpAddr::V4(Ipv4Addr::UNSPECIFIED),
             service_port,
-            StatefulService::create(handler),
+            hyper_services::ConnectionProperties::default()
         )
     };
 
